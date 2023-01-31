@@ -30,6 +30,15 @@ class Enemigo(Personaje):
     # self.x = x
     # self.y = y
 
+class Bala(Personaje):
+  movimiento = 5
+  visible = False
+
+  def show(self, x_jugador):
+    self.visible = True
+    pantalla.blit(self.set_image(), (x_jugador, self.y))
+
+
 
 #? Configuraciones generales
 icono = pygame.image.load('assets/favicon.svg')
@@ -45,6 +54,9 @@ nave = Personaje('nave.png', 368, 500)
 #? Enemigo
 alien = Enemigo('ovni.png', 0, 0)
 
+#? Bala
+bala = Bala('bala.png', nave.x, nave.y)
+
 
 #? Inicializacion juego
 run = True
@@ -58,6 +70,11 @@ while run:
         nave.movimiento = -2.3
       elif event.key == pygame.K_RIGHT:
         nave.movimiento = 2.3
+      elif event.key == pygame.K_SPACE:
+        if not bala.visible:
+          bala.x = nave.x
+          bala.show(nave.x + nave.movimiento)
+        
 
     elif event.type == pygame.KEYUP:
       if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -83,6 +100,13 @@ while run:
   if alien.x <= 0:
     Enemigo.movimiento = (2, .1)
 
+  #? Moviemiento Bala
+  if bala.y <= -64:
+    bala.y = 500
+    bala.visible = False
+  elif bala.visible:
+    bala.show(bala.x)
+    bala.y -= Bala.movimiento
 
   nave.show()
   pygame.display.update()
