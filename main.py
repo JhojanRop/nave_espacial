@@ -28,11 +28,11 @@ class Enemigo(Personaje):
   def __init__(self, image, x, y):
     self.image = f'assets/{image}'
     self.x = random.randint(0,736)
-    self.y = random.randint(100, 350)
+    self.y = random.randint(100, 290)
 
   def reaparecer(self):
     self.x = random.randint(0,736)
-    self.y = random.randint(100, 350)
+    self.y = random.randint(100, 270)
 
 class Bala(Personaje):
   movimiento = 8
@@ -146,7 +146,7 @@ while run:
       alien.reaparecer()
       puntaje += 1
     
-    if alien.y > 370:
+    if alien.y > 400:
       for instancia in aliens:
         instancia.y = -1000
         instancia.movimiento = (0,0)
