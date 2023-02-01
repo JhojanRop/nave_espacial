@@ -5,7 +5,7 @@ import random, math
 pygame.init()
 pantalla = pygame.display.set_mode((800,600))
 
-#? clases
+#? clases y funciones
 class Personaje():
   movimiento = 0
 
@@ -26,11 +26,11 @@ class Enemigo(Personaje):
   def __init__(self, image, x, y):
     self.image = f'assets/{image}'
     self.x = random.randint(0,736)
-    self.y = random.randint(0, 300)
+    self.y = random.randint(100, 350)
 
   def reaparecer(self):
     self.x = random.randint(0,736)
-    self.y = random.randint(0, 300)
+    self.y = random.randint(100, 350)
 
 class Bala(Personaje):
   movimiento = 8
@@ -45,14 +45,20 @@ def colision(x1,x2,y1,y2):
   distancia = math.sqrt(math.pow(x2-x1, 2) + math.pow(y2-y1, 2))
   return True if distancia < 30 else False
 
+def puntos(x,y):
+  texto = font.render(f'Puntaje: {puntaje}', True, (255,255,255))
+  pantalla.blit(texto,(x,y))
+
 #? Variables generales
 puntaje = 0
 aliens = []
-numero_aliens = 5
+numero_aliens = 8
 
 #? Configuraciones generales
 icono = pygame.image.load('assets/favicon.svg')
 background = pygame.image.load('assets/background.png')
+font = pygame.font.Font('assets/8-bit-hud.ttf', 18)
+# font = pygame.font.Font('freesansbold.ttf', 32)
 
 pygame.display.set_caption('Invasion Espacial')
 pygame.display.set_icon(icono)
@@ -62,7 +68,6 @@ pygame.display.set_icon(icono)
 nave = Personaje('nave.png', 368, 500)
 
 #? Enemigo
-# alien = Enemigo('ovni.png', 0, 0)
 for i in range(numero_aliens):
   alien = Enemigo('ovni.png', 0, 0)
   aliens.append(alien)
@@ -121,7 +126,6 @@ while run:
       bala.visible = False
       alien.reaparecer()
       puntaje += 1
-      print(puntaje)
 
   #? Moviemiento Bala
   if bala.y <= -64:
@@ -131,6 +135,7 @@ while run:
     bala.show(bala.x)
     bala.y -= Bala.movimiento
 
+
   nave.show()
+  puntos(10,10)
   pygame.display.update()
-  
