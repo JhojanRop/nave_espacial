@@ -1,5 +1,5 @@
 import pygame
-import random
+import random, math
 
 #? Inicializar
 pygame.init()
@@ -30,6 +30,10 @@ class Enemigo(Personaje):
     # self.x = x
     # self.y = y
 
+  def reaparecer(self):
+    self.x = random.randint(0,736)
+    self.y = random.randint(0, 300)
+
 class Bala(Personaje):
   movimiento = 5
   visible = False
@@ -39,6 +43,12 @@ class Bala(Personaje):
     pantalla.blit(self.set_image(), (x_jugador, self.y))
 
 
+def colision(x1,x2,y1,y2):
+  distancia = math.sqrt(math.pow(x2-x1, 2) + math.pow(y2-y1, 2))
+  return True if distancia < 30 else False
+
+#? Variables generales
+puntaje = 0
 
 #? Configuraciones generales
 icono = pygame.image.load('assets/favicon.svg')
@@ -107,6 +117,15 @@ while run:
   elif bala.visible:
     bala.show(bala.x)
     bala.y -= Bala.movimiento
+
+  #? Detactar colision
+  colision_ = colision(alien.x, bala.x, alien.y, bala.y)
+  if colision_:
+    bala.y = 500
+    bala.visible = False
+    alien.reaparecer()
+    puntaje += 1
+    print(puntaje)
 
   nave.show()
   pygame.display.update()
