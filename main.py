@@ -1,6 +1,7 @@
 import pygame
 from pygame import mixer
 import random, math
+import io
 
 #? Inicializar
 pygame.init()
@@ -51,10 +52,14 @@ def colision(x1,x2,y1,y2):
   distancia = math.sqrt(math.pow(x2-x1, 2) + math.pow(y2-y1, 2))
   return True if distancia < 30 else False
 
-def texto(x,y, texto, fz):
-  font = pygame.font.Font('assets/font/8-bit-hud.ttf', fz)
+def texto(x,y, texto):
   texto = font.render(texto, True, (255,255,255))
   pantalla.blit(texto,(x,y))
+
+def font_bytes(font):
+  with open(font, 'rb') as f:
+    ttf_bytes = f.read()
+  return io.BytesIO(ttf_bytes)
 
 #? Variables generales
 puntaje = 0
@@ -66,6 +71,9 @@ numero_aliens = 8
 icono = pygame.image.load('assets/favicon.svg')
 background = pygame.image.load('assets/background.png')
 mixer.music.load('assets/sound/soundtrack.mp3')
+font_byte = font_bytes('assets/font/8-bit-hud.ttf')
+font = pygame.font.Font(font_byte, 18)
+
 
 pygame.display.set_caption('Invasion Espacial')
 pygame.display.set_icon(icono)
@@ -143,7 +151,6 @@ while run:
         instancia.y = -1000
         instancia.movimiento = (0,0)
       alive = False
-      print('Perdiste') 
     
 
   #? Moviemiento Bala
@@ -156,10 +163,10 @@ while run:
 
   #? Detectar fin del juego
   if alive:
-    texto(10,10, f'Puntaje: {puntaje}', 18)
+    texto(10,10, f'Puntaje: {puntaje}')
   else:
-    texto(220,220, 'Perdiste', 40)
-    texto(315,300, f'Puntaje: {puntaje}', 15)
+    texto(320,240, 'Perdiste')
+    texto(302,270, f'Puntaje: {puntaje}')
 
 
   nave.show()
