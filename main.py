@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 import random, math
 
 #? Inicializar
@@ -35,6 +36,11 @@ class Enemigo(Personaje):
 class Bala(Personaje):
   movimiento = 8
   visible = False
+  disparo = mixer.Sound('assets/sound/disparo.mp3')
+  disparo.set_volume(0.03)
+  impacto = mixer.Sound('assets/sound/Golpe.mp3')
+  impacto.set_volume(0.03)
+
 
   def show(self, x_jugador):
     self.visible = True
@@ -57,11 +63,14 @@ numero_aliens = 8
 #? Configuraciones generales
 icono = pygame.image.load('assets/favicon.svg')
 background = pygame.image.load('assets/background.png')
-font = pygame.font.Font('assets/8-bit-hud.ttf', 18)
-# font = pygame.font.Font('freesansbold.ttf', 32)
+font = pygame.font.Font('assets/font/8-bit-hud.ttf', 18)
+mixer.music.load('assets/sound/soundtrack.mp3')
+# mixer.music.load('assets/soundtrack.mp3')
 
 pygame.display.set_caption('Invasion Espacial')
 pygame.display.set_icon(icono)
+mixer.music.set_volume(0.05)
+mixer.music.play(-1)
 
 
 #? Personaje
@@ -89,6 +98,7 @@ while run:
       elif event.key == pygame.K_RIGHT:
         nave.movimiento = 2.8
       elif event.key == pygame.K_SPACE:
+        bala.disparo.play()
         if not bala.visible:
           bala.x = nave.x
           bala.show(nave.x + nave.movimiento)
@@ -122,6 +132,7 @@ while run:
     #? Detactar colision
     colision_ = colision(alien.x, bala.x, alien.y, bala.y)
     if colision_:
+      bala.impacto.play()
       bala.y = 500
       bala.visible = False
       alien.reaparecer()
