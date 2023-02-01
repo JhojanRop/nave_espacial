@@ -51,21 +51,21 @@ def colision(x1,x2,y1,y2):
   distancia = math.sqrt(math.pow(x2-x1, 2) + math.pow(y2-y1, 2))
   return True if distancia < 30 else False
 
-def puntos(x,y):
-  texto = font.render(f'Puntaje: {puntaje}', True, (255,255,255))
+def texto(x,y, texto, fz):
+  font = pygame.font.Font('assets/font/8-bit-hud.ttf', fz)
+  texto = font.render(texto, True, (255,255,255))
   pantalla.blit(texto,(x,y))
 
 #? Variables generales
 puntaje = 0
+alive = True
 aliens = []
 numero_aliens = 8
 
 #? Configuraciones generales
 icono = pygame.image.load('assets/favicon.svg')
 background = pygame.image.load('assets/background.png')
-font = pygame.font.Font('assets/font/8-bit-hud.ttf', 18)
 mixer.music.load('assets/sound/soundtrack.mp3')
-# mixer.music.load('assets/soundtrack.mp3')
 
 pygame.display.set_caption('Invasion Espacial')
 pygame.display.set_icon(icono)
@@ -137,6 +137,14 @@ while run:
       bala.visible = False
       alien.reaparecer()
       puntaje += 1
+    
+    if alien.y > 370:
+      for instancia in aliens:
+        instancia.y = -1000
+        instancia.movimiento = (0,0)
+      alive = False
+      print('Perdiste') 
+    
 
   #? Moviemiento Bala
   if bala.y <= -64:
@@ -146,7 +154,13 @@ while run:
     bala.show(bala.x)
     bala.y -= Bala.movimiento
 
+  #? Detectar fin del juego
+  if alive:
+    texto(10,10, f'Puntaje: {puntaje}', 18)
+  else:
+    texto(220,220, 'Perdiste', 40)
+    texto(315,300, f'Puntaje: {puntaje}', 15)
+
 
   nave.show()
-  puntos(10,10)
   pygame.display.update()
