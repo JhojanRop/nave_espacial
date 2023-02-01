@@ -27,15 +27,13 @@ class Enemigo(Personaje):
     self.image = f'assets/{image}'
     self.x = random.randint(0,736)
     self.y = random.randint(0, 300)
-    # self.x = x
-    # self.y = y
 
   def reaparecer(self):
     self.x = random.randint(0,736)
     self.y = random.randint(0, 300)
 
 class Bala(Personaje):
-  movimiento = 5
+  movimiento = 8
   visible = False
 
   def show(self, x_jugador):
@@ -49,6 +47,8 @@ def colision(x1,x2,y1,y2):
 
 #? Variables generales
 puntaje = 0
+aliens = []
+numero_aliens = 5
 
 #? Configuraciones generales
 icono = pygame.image.load('assets/favicon.svg')
@@ -62,7 +62,10 @@ pygame.display.set_icon(icono)
 nave = Personaje('nave.png', 368, 500)
 
 #? Enemigo
-alien = Enemigo('ovni.png', 0, 0)
+# alien = Enemigo('ovni.png', 0, 0)
+for i in range(numero_aliens):
+  alien = Enemigo('ovni.png', 0, 0)
+  aliens.append(alien)
 
 #? Bala
 bala = Bala('bala.png', nave.x, nave.y)
@@ -77,9 +80,9 @@ while run:
   for event in pygame.event.get():
     if event.type == pygame.KEYDOWN:
       if event.key == pygame.K_LEFT:
-        nave.movimiento = -2.3
+        nave.movimiento = -2.8
       elif event.key == pygame.K_RIGHT:
-        nave.movimiento = 2.3
+        nave.movimiento = 2.8
       elif event.key == pygame.K_SPACE:
         if not bala.visible:
           bala.x = nave.x
@@ -102,13 +105,23 @@ while run:
     nave.x = 736
 
   #? Movimiento Alien
-  alien.show()
-  alien.x += Enemigo.movimiento[0]
-  alien.y += Enemigo.movimiento[1]
-  if alien.x >= 736:
-    Enemigo.movimiento = (-2, .1)
-  if alien.x <= 0:
-    Enemigo.movimiento = (2, .1)
+  for alien in aliens:
+    alien.show()
+    alien.x += alien.movimiento[0]
+    alien.y += alien.movimiento[1]
+    if alien.x >= 736:
+      alien.movimiento = (-2, .1)
+    if alien.x <= 0:
+      alien.movimiento = (2, .1)
+    
+    #? Detactar colision
+    colision_ = colision(alien.x, bala.x, alien.y, bala.y)
+    if colision_:
+      bala.y = 500
+      bala.visible = False
+      alien.reaparecer()
+      puntaje += 1
+      print(puntaje)
 
   #? Moviemiento Bala
   if bala.y <= -64:
@@ -117,15 +130,6 @@ while run:
   elif bala.visible:
     bala.show(bala.x)
     bala.y -= Bala.movimiento
-
-  #? Detactar colision
-  colision_ = colision(alien.x, bala.x, alien.y, bala.y)
-  if colision_:
-    bala.y = 500
-    bala.visible = False
-    alien.reaparecer()
-    puntaje += 1
-    print(puntaje)
 
   nave.show()
   pygame.display.update()
